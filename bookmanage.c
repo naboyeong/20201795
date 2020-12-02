@@ -2,14 +2,17 @@
 #include<stdlib.h>
 #include<string.h>
 #define ESC 0x1b
+
 void bookchange();
 void bookmark(void);
+void bookimformation(void);
+
 typedef struct book{
 	char name[30]; //책이름
 	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
 	int read; //책갈피, 책 몇쪽까지 읽었는지
 	char location[10]; //책 위치
-	char type; //책 종류
+	char type[10]; //책 종류
 	int damage; //책 훼손상태 1 상 2 중 3 하
 	struct book* next;
 }book_t;
@@ -48,6 +51,7 @@ int main(void)
 	
 	switch(number){
 		case 1:
+			bookimformation();
 			break;
 		case 2:
 			break;
@@ -139,43 +143,46 @@ void bookimformation(void)
 	book_t* tmp_node;
 	book_t* list_head = NULL;
 	char name[30];
-	char input = '0';
+	int input = 1;
 	
-	fp = fopen("book.txt", "r+");
+	fp = fopen("book.dat", "r+");
 	if(fp ==NULL){
 		printf("Cannot open file\n");
 		return;
 	}
 	
 	while(!feof(fp)){
-		new_node = (book_t*) malloc(sizeof(book_t));
-		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location,new_node->type, new_node->read, new_node->star, new_node->damage);
+		new_node = (book_t*) malloc (sizeof(book_t));
+		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location, new_node->type, &new_node->read, &new_node->star, &new_node->damage);
 		
 		new_node->next = list_head;
 		list_head = new_node;
 	}
 		
 	//책 조회
-	while(input!= ESC){
+	while(input!= 0){
 		printf("-------------------\n");
 		printf("책을 검색합니다.\n");
 		printf("책 이름: ");
-		scanf("%s", &name);
+		scanf("%s", name);
 		tmp_node = search_book(name, list_head);
-		if(tmp_node)
+		if(tmp_node){
 			printf("책에 대한 정보입니다.\n");
 			printf("책 제목: %s\n", tmp_node->name);
 			printf("책 위치: %s\n", tmp_node->location);
 			printf("책 종류: %s\n", tmp_node->type);
+		
 			if (tmp_node->star == 1)
 				printf("즐겨찾기 되어있습니다.\n");
 			else
 				printf("즐겨찾기 되어있지않습니다.\n");
-			
+		}	
 		else
 			printf("찾는 책이 없습니다.\n");
-		printf("종료는 계속은 Enter 키를 누르세요\n");
-		input = _getch();
+		
+		printf("종료하려면 0을 누르세요\n");
+		scanf("%d", &input);
+		
 	}
 	
 	while(list_head){
@@ -183,5 +190,6 @@ void bookimformation(void)
 		list_head = list_head->next;
 		free(tmp_node);
 	}
+
 	fclose(fp);
 }
