@@ -139,7 +139,7 @@ void bookimformation(void)
 	book_t* tmp_node;
 	book_t* list_head = NULL;
 	char name[30];
-	char imput = '0'
+	char input = '0';
 	
 	fp = fopen("book.txt", "r+");
 	if(fp ==NULL){
@@ -148,7 +148,7 @@ void bookimformation(void)
 	}
 	
 	while(!feof(fp)){
-		new_node = (book_t*) malloc(sizeof(book_t_));
+		new_node = (book_t*) malloc(sizeof(book_t));
 		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location,new_node->type, new_node->read, new_node->star, new_node->damage);
 		
 		new_node->next = list_head;
