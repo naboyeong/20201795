@@ -12,6 +12,8 @@ void booktype(void);
 void bookstar(void);
 void bookread(void);
 void bookdamage(void);
+void bookwrite(void);
+
 
 typedef struct book{
 	char name[30]; //책이름
@@ -34,6 +36,18 @@ typedef struct bookrandom{
 	int num; //책번호 붙이기(랜덤으로 뽐기위한)
 	struct bookrandom* next;
 }bookrandom_t;
+
+typedef struct booknew{
+	char name[30]; //책이름
+	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
+	int read; //책갈피, 책 몇쪽까지 읽었는지
+	char location[10]; //책 위치
+	char type[10]; //책 종류
+	int damage; //책 훼손상태 1 상 2 중 3 하
+
+}booknew_t;
+
+booknew_t get_record();
 
 book_t* search_book(char* name, book_t* list_head)
 {
@@ -190,6 +204,7 @@ void bookchange()
 	
 	switch(booknumber){
 		case 1:
+			bookwrite();
 			break;
 		case 2:
 			break;
@@ -527,4 +542,41 @@ void bookdamage(void)
 	}
 
 	fclose(fp);
+
 }
+booknew_t get_record()
+{
+	booknew_t data;
+	fflush(stdin);
+	printf("책이름");	
+	scanf("%s", data.name);
+	printf("책위치");	
+	scanf("%s", data.location);
+	printf("책종류");
+	scanf("%s", data.type);
+	printf("책갈피");	
+	scanf("%d", &data.read);
+	printf("즐겨찾기 여부 1즐겨찾기 0은 아님"); 
+	scanf("%d", &data.star);
+	printf("책훼손상태 ");	
+	scanf("%d", &data.damage);
+
+	return data;
+}
+void bookwrite(void)
+{
+	FILE *fp = NULL;
+	int select;
+	if((fp = fp = fopen("book.dat", "a+b") )== NULL){
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다");
+		exit(1);
+	}
+
+	booknew_t data;
+	data = get_record();
+	fseek(fp, 0, SEEK_END);
+	fwrite(&data, sizeof(data),1,fp);
+
+}
+
+	
