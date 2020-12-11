@@ -544,38 +544,34 @@ void bookdamage(void)
 	fclose(fp);
 
 }
-booknew_t get_record()
-{
-	booknew_t data;
-	fflush(stdin);
-	printf("책이름");	
-	scanf("%s", data.name);
-	printf("책위치");	
-	scanf("%s", data.location);
-	printf("책종류");
-	scanf("%s", data.type);
-	printf("책갈피");	
-	scanf("%d", &data.read);
-	printf("즐겨찾기 여부 1즐겨찾기 0은 아님"); 
-	scanf("%d", &data.star);
-	printf("책훼손상태 ");	
-	scanf("%d", &data.damage);
 
-	return data;
-}
 void bookwrite(void)
 {
 	FILE *fp = NULL;
 	int select;
-	if((fp = fp = fopen("book.dat", "a+b") )== NULL){
+	if((fp = fopen("book.dat", "a+") )== NULL){
 		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다");
 		exit(1);
 	}
 
 	booknew_t data;
-	data = get_record();
+	printf("책이름 ");	
+	scanf("%s", data.name);
+	printf("책위치 ");	
+	scanf("%s", data.location);
+	printf("책종류 ");
+	scanf("%s", data.type);
+	printf("책갈피 ");	
+	scanf("%d", &data.read);
+	printf("즐겨찾기 여부 1즐겨찾기 0은 아님 "); 
+	scanf("%d", &data.star);
+	printf("책훼손상태 ");	
+	scanf("%d", &data.damage);
+
 	fseek(fp, 0, SEEK_END);
-	fwrite(&data, sizeof(data),1,fp);
+	fprintf(fp, "%s %s %s %d %d %d", data.name,data.location, data.type, data.read, data.star, data.damage);
+
+	fclose(fp);
 
 }
 
