@@ -13,7 +13,9 @@ void bookstar(void);
 void bookread(void);
 void bookdamage(void);
 void bookwrite(void);
-
+void bookreadc(void); //책갈피 수정
+void bookrmove(void);
+void bookstarc(void);
 
 typedef struct book{
 	char name[30]; //책이름
@@ -72,6 +74,30 @@ void search_type(char* type, book_t* list_head)
 	}
 	
 }
+book_t* search_rmove(char* name, book_t* list_head)
+{
+	book_t* temp;
+	book_t* prev;
+	temp = list_head;
+	int i;
+	if (strcmp(temp->name, name)==0){
+		list_head = temp->next;
+		free(temp);
+	}
+	else {
+		for (i = 0; strcmp(temp->name, name) != 0; ++i){
+			temp = temp->next;
+			if( i != 0){
+				prev = prev->next;
+			}if(i ==1){
+				prev = list_head;
+			}
+		}
+		prev->next = temp->next;
+		free(temp);
+	}
+	return list_head;
+}
 
 int search_read(char* name, book_t* list_head)
 {
@@ -89,6 +115,31 @@ int search_read(char* name, book_t* list_head)
 	return 0;
 }
 
+int search_readc(char* name, book_t* list_head, int* ra)
+{
+	book_t* tmp = list_head;
+	while (tmp){
+		if(!strcmp(tmp->name, name)){
+			tmp->read = *ra;
+			return 1;
+		}
+		tmp = tmp->next;
+	}
+	return 0;
+}
+
+int search_starc(char* name, book_t* list_head, int* ra)
+{
+	book_t* tmp = list_head;
+	while (tmp){
+		if(!strcmp(tmp->name, name)){
+			tmp->star = *ra;
+			return 1;
+		}
+		tmp = tmp->next;
+	}
+	return 0;
+}
 int search_damage(char* name, book_t* list_head)
 {
 	book_t* tmp = list_head;
@@ -158,15 +209,16 @@ int main(void)
 			bookrandomc();
 			break;
 		case 3:
-			bookchange();
+			bookwrite();
 			break;
 		case 4:
+			bookrmove();
 			break;
 		case 5:
 			booktype();
 			break;
 		case 6:
-			bookstar();
+			bookchange();
 			break;
 		case 7:
 			bookmark();
@@ -195,18 +247,19 @@ void bookchange()
 	bookend = 1;
 	do
 	{
-	printf("책목록을 수정합니다.\n");
-	printf("1.책추가\n");
-	printf("2.책 목록 제거\n");
+	printf("즐겨찾기 기능입니다.\n");
+	printf("1.즐겨찾기\n");
+	printf("2.즐겨찾기 수정\n");
 	printf("3.뒤로가기\n");
 	printf("번호를 선택하세요! ");
 	scanf("%d", &booknumber);
 	
 	switch(booknumber){
 		case 1:
-			bookwrite();
+			bookstar();
 			break;
 		case 2:
+			bookstarc();
 			break;
 		case 3:
 			bookend = 0;
@@ -235,6 +288,7 @@ void bookmark(void)
 			bookread();
 			break;
 		case 2:
+			bookreadc();
 			break;
 		case 3:
 			bookend = 0;
@@ -575,4 +629,190 @@ void bookwrite(void)
 
 }
 
+void bookreadc(void)
+{
+	FILE* fp = NULL;
+	book_t* new_node;
+	book_t* tmp_node;
+	book_t* list_head = NULL;
+	char name[30];
+	int input = 1;
+	int r;
+	int ra;
+	fp = fopen("book.dat", "r+");
+	if(fp ==NULL){
+		printf("Cannot open file\n");
+		return;
+	}
 	
+	while(!feof(fp)){
+		new_node = (book_t*) malloc (sizeof(book_t));
+		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location, new_node->type, &new_node->read, &new_node->star, &new_node->damage);
+		
+		new_node->next = list_head;
+		list_head = new_node;
+	}
+		
+
+	while(input!= 0){
+		printf("-------------------\n");
+		printf("책갈피 수정할 책의 제목을 입력하세요\n");
+		printf("책 이름: ");
+		scanf("%s", name);
+		printf("책갈피 쪽수: ");
+		scanf("%d", &ra); 
+		r = search_readc(name, list_head, &ra);
+		if(r == 0){
+			printf("찾는 책이 없습니다.\n");
+		}	
+		
+		printf("종료하려면 0을 누르세요\n");
+		scanf("%d", &input);
+		
+	}
+	fclose(fp);
+
+	if((fp = fopen("book.dat", "w+") )== NULL){
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다");
+		exit(1);
+	}
+	
+	book_t* tmp = list_head;
+	while(tmp){
+		
+		fseek(fp, 0, SEEK_END);
+		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		tmp = tmp->next;
+	}	
+	while(list_head){
+		tmp_node = list_head;
+		list_head = list_head->next;
+		free(tmp_node);
+	}
+
+	fclose(fp);
+}
+
+void bookrmove(void){
+
+	FILE* fp = NULL;
+	book_t* new_node;
+	book_t* tmp_node;
+	book_t* list_head = NULL;
+	char name[30];
+	int input = 1;
+	int r;
+	int ra;
+	fp = fopen("book.dat", "r+");
+	if(fp ==NULL){
+		printf("Cannot open file\n");
+		return;
+	}
+	
+	while(!feof(fp)){
+		new_node = (book_t*) malloc (sizeof(book_t));
+		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location, new_node->type, &new_node->read, &new_node->star, &new_node->damage);
+		
+		new_node->next = list_head;
+		list_head = new_node;
+	}
+	
+	while(input!= 0){
+		printf("-------------------\n");
+		printf("책갈피 삭제할 책의 제목을 입력하세요\n");
+		printf("책 이름: ");
+		scanf("%s", name);
+		list_head = search_rmove(name, list_head);
+
+		printf("종료하려면 0을 누르세요\n");
+		scanf("%d", &input);
+		
+	}
+	fclose(fp);
+
+	if((fp = fopen("book.dat", "w+") )== NULL){
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다");
+		exit(1);
+	}
+	
+	book_t* tmp = list_head;
+	while(tmp){
+		
+		fseek(fp, 0, SEEK_END);
+		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		tmp = tmp->next;
+	}	
+	while(list_head){
+		tmp_node = list_head;
+		list_head = list_head->next;
+		free(tmp_node);
+	}
+
+	fclose(fp);
+}
+
+void bookstarc(void)
+{
+
+	FILE* fp = NULL;
+	book_t* new_node;
+	book_t* tmp_node;
+	book_t* list_head = NULL;
+	char name[30];
+	int input = 1;
+	int r;
+	int ra;
+	fp = fopen("book.dat", "r+");
+	if(fp ==NULL){
+		printf("Cannot open file\n");
+		return;
+	}
+	
+	while(!feof(fp)){
+		new_node = (book_t*) malloc (sizeof(book_t));
+		fscanf(fp, "%s %s %s %d %d %d\n", new_node->name, new_node->location, new_node->type, &new_node->read, &new_node->star, &new_node->damage);
+		
+		new_node->next = list_head;
+		list_head = new_node;
+	}
+		
+
+	while(input!= 0){
+		printf("-------------------\n");
+		printf("즐겨찾기를 수정할 책의 제목을 입력하세요\n");
+		printf("책 이름: ");
+		scanf("%s", name);
+		printf("즐겨찾기 여부(1=O,0=X): ");
+		scanf("%d", &ra); 
+		r = search_starc(name, list_head, &ra);
+		if(r == 0){
+			printf("찾는 책이 없습니다.\n");
+		}	
+		
+		printf("종료하려면 0을 누르세요\n");
+		scanf("%d", &input);
+		
+	}
+	fclose(fp);
+
+	if((fp = fopen("book.dat", "w+") )== NULL){
+		fprintf(stderr, "입력을 위한 파일을 열 수 없습니다");
+		exit(1);
+	}
+	
+	book_t* tmp = list_head;
+	while(tmp){
+		
+		fseek(fp, 0, SEEK_END);
+		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		tmp = tmp->next;
+	}	
+	while(list_head){
+		tmp_node = list_head;
+		list_head = list_head->next;
+		free(tmp_node);
+	}
+
+	fclose(fp);
+}
+
