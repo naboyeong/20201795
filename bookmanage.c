@@ -103,7 +103,7 @@ int search_read(char* name, book_t* list_head)
 	book_t* tmp = list_head;
 	while (tmp){
 		if(!strcmp(tmp->name, name)){
-			if (tmp->type == "문제집")
+			if (strcmp(tmp->type ,"문제집")==0)
 				printf("%d까지 풀었습니다.\n", tmp->read);
 			else
 				printf("%d까지 읽었습니다.\n", tmp->read);
@@ -389,7 +389,7 @@ void bookrandomc(bookrandom_t*(*func)(int* , bookrandom_t*))
 	do{
 		brandom = rand()%n;
 		tmp_node = func(&brandom, list_head);
-	}while(tmp_node->type == "문제집");
+	}while(strcmp(tmp_node->type ,"문제집")==0);
 		
 	if(tmp_node){
 		printf("추천하는 책입니다.\n");
