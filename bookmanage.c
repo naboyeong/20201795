@@ -9,7 +9,7 @@ typedef struct book{
 	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
 	int read; //책갈피, 책 몇쪽까지 읽었는지
 	char location[10]; //책 위치
-	char type[10]; //책 종류
+	char type[20]; //책 종류
 	int damage; //책 훼손상태 1 상 2 중 3 하
 	struct book* next;
 }book_t;
@@ -19,7 +19,7 @@ typedef struct bookrandom{
 	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
 	int read; //책갈피, 책 몇쪽까지 읽었는지
 	char location[10]; //책 위치
-	char type[10]; //책 종류
+	char type[20]; //책 종류
 	int damage; //책 훼손상태 1 상 2 중 3 하
 	int num; //책번호 붙이기(랜덤으로 뽐기위한)
 	struct bookrandom* next;
@@ -30,7 +30,7 @@ typedef struct booknew{
 	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
 	int read; //책갈피, 책 몇쪽까지 읽었는지
 	char location[10]; //책 위치
-	char type[10]; //책 종류
+	char type[20]; //책 종류
 	int damage; //책 훼손상태 1 상 2 중 3 하
 
 }booknew_t;
@@ -426,7 +426,7 @@ void booktype(void(*func)(char*, book_t*)){
 	book_t* new_node;
 	book_t* tmp_node;
 	book_t* list_head = NULL;
-	char type[10];
+	char type[20];
 	int input = 1;
 	
 	fp = fopen("book.dat", "r+");
