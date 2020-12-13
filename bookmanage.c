@@ -39,10 +39,10 @@ void bookchange();
 void bookmark(void);
 void bookimformation(void);
 void bookrandomc(bookrandom_t*(*func)(int*, bookrandom_t*));
-void booktype(void);
+void booktype(void(*func)(char*, book_t*));
 void bookstar(void);
 void bookread(void);
-void bookdamage(void);
+void bookdamage(int(*func)(char*, book_t*));
 void bookwrite(void);
 void bookreadc(void); //책갈피 수정
 void bookrmove(void);
@@ -98,6 +98,18 @@ book_t* search_rmove(char* name, book_t* list_head)
 	return list_head;
 }
 
+int search_name(char* name, book_t* list_head)
+{
+	book_t* tmp = list_head;
+	while (tmp){
+		if(!strcmp(tmp->name, name)){
+			return 1;
+		}
+		tmp = tmp->next;
+	}
+	printf("책이 존재하지않습니다.\n");
+	return 0;
+}
 int search_read(char* name, book_t* list_head)
 {
 	book_t* tmp = list_head;
@@ -214,7 +226,7 @@ int main(void)
 			bookrmove();
 			break;
 		case 5:
-			booktype();
+			booktype(search_type);
 			break;
 		case 6:
 			bookchange();
@@ -223,7 +235,7 @@ int main(void)
 			bookmark();
 			break;
 		case 8:
-			bookdamage();
+			bookdamage(search_damage);
 			break;
 		case 9:
 			end = 0;
@@ -406,7 +418,7 @@ void bookrandomc(bookrandom_t*(*func)(int* , bookrandom_t*))
 	fclose(fp);
 }
 
-void booktype(void){
+void booktype(void(*func)(char*, book_t*)){
 	
 	FILE* fp = NULL;
 	book_t* new_node;
@@ -435,7 +447,7 @@ void booktype(void){
 		printf("검색할 책 종류를 고르세요\n");
 		printf("책 종류(소설, 문제집, 자기계발서, 동화책, 만화책, 정보, 기타): ");
 		scanf("%s", type);
-		search_type(type, list_head);
+		func(type, list_head);
 	
 		printf("다찾았습니다.\n");
 		printf("\n");
@@ -541,7 +553,7 @@ void bookread(void)
 
 	fclose(fp);
 }
-void bookdamage(void)
+void bookdamage(int(*func)(char*, book_t*))
 {
 	FILE* fp = NULL;
 	book_t* new_node;
@@ -570,7 +582,7 @@ void bookdamage(void)
 		printf("책상태를 볼 책을 검색하세요\n");
 		printf("책 이름: ");
 		scanf("%s", name);
-		r = search_damage(name, list_head);
+		r = func(name, list_head);
 		if(r == 0){
 			printf("찾는 책이 없습니다.\n");
 		}	
@@ -694,6 +706,7 @@ void bookrmove(void){
 	int input = 1;
 	int r;
 	int ra;
+	int a;
 	fp = fopen("book.dat", "r+");
 	if(fp ==NULL){
 		printf("Cannot open file\n");
@@ -710,9 +723,12 @@ void bookrmove(void){
 	
 	while(input!= 0){
 		printf("-------------------\n");
+		do{
 		printf("책갈피 삭제할 책의 제목을 입력하세요\n");
 		printf("책 이름: ");
 		scanf("%s", name);
+		a = search_name(name, list_head);
+		}while(a==0);
 		list_head = search_rmove(name, list_head);
 
 		printf("종료하려면 0을 누르세요\n");
