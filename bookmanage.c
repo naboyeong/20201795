@@ -4,19 +4,6 @@
 #include<time.h>
 #define ESC 0x1b
 
-void bookchange();
-void bookmark(void);
-void bookimformation(void);
-void bookrandomc(void);
-void booktype(void);
-void bookstar(void);
-void bookread(void);
-void bookdamage(void);
-void bookwrite(void);
-void bookreadc(void); //책갈피 수정
-void bookrmove(void);
-void bookstarc(void);
-
 typedef struct book{
 	char name[30]; //책이름
 	int star; //책 즐겨찾가 -0,1로 표현 1 즐겨찾기, 0즐겨찾기x
@@ -26,7 +13,6 @@ typedef struct book{
 	int damage; //책 훼손상태 1 상 2 중 3 하
 	struct book* next;
 }book_t;
-
 
 typedef struct bookrandom{
 	char name[30]; //책이름
@@ -48,6 +34,19 @@ typedef struct booknew{
 	int damage; //책 훼손상태 1 상 2 중 3 하
 
 }booknew_t;
+
+void bookchange();
+void bookmark(void);
+void bookimformation(void);
+void bookrandomc(bookrandom_t*(*func)(int*, bookrandom_t*));
+void booktype(void);
+void bookstar(void);
+void bookread(void);
+void bookdamage(void);
+void bookwrite(void);
+void bookreadc(void); //책갈피 수정
+void bookrmove(void);
+void bookstarc(void);
 
 booknew_t get_record();
 
@@ -206,7 +205,7 @@ int main(void)
 			bookimformation();
 			break;
 		case 2:
-			bookrandomc();
+			bookrandomc(search_number);
 			break;
 		case 3:
 			bookwrite();
@@ -357,8 +356,7 @@ void bookimformation(void)
 	fclose(fp);
 }
 
-
-void bookrandomc(void)
+void bookrandomc(bookrandom_t*(*func)(int* , bookrandom_t*))
 {
 	FILE* fp = NULL;
 	bookrandom_t* new_node;
@@ -387,25 +385,18 @@ void bookrandomc(void)
 	printf("-------------------\n");
 	printf("책을 추첨합니다\n");
 	srand((unsigned)time(NULL));
-UTER:
-	brandom = rand()%n;
-	tmp_node = search_number(&brandom, list_head);
-	if(tmp_node->type == "문제집"){
-		//do{
-		//brandom = rand()%n;
-		//tmp_node = search_number(&brandom, list_head);
-		//}while(tmp_node->type == "문제집");
-		goto UTER;
+
+	do{
+		brandom = rand()%n;
+		tmp_node = func(&brandom, list_head);
+	}while(tmp_node->type == "문제집");
 		
-	}
 	if(tmp_node){
 		printf("추천하는 책입니다.\n");
 		printf("책 제목: %s\n", tmp_node->name);
 		printf("책 위치: %s\n", tmp_node->location);
 	}	
 		
-		
-	
 	while(list_head){
 		tmp_node = list_head;
 		list_head = list_head->next;
