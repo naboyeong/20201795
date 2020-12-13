@@ -258,6 +258,7 @@ void bookchange()
 	bookend = 1;
 	do
 	{
+	printf("----------------\n");
 	printf("즐겨찾기 기능입니다.\n");
 	printf("1.즐겨찾기\n");
 	printf("2.즐겨찾기 수정\n");
@@ -287,6 +288,7 @@ void bookmark(void)
 	bookend = 1;
 	do
 	{
+	printf("------------------\n");
 	printf("책갈피를 사용합니다.\n");
 	printf("1.책갈피\n");
 	printf("2.책쪽수 수정 \n");
@@ -612,6 +614,8 @@ void bookwrite(void)
 	}
 
 	booknew_t data;
+	printf("------------------\n");
+	printf("추가할 책정보를 적어주세요\n");
 	printf("책이름 ");	
 	scanf("%s", data.name);
 	printf("책위치 ");	
@@ -626,7 +630,7 @@ void bookwrite(void)
 	scanf("%d", &data.damage);
 
 	fseek(fp, 0, SEEK_END);
-	fprintf(fp, "%s %s %s %d %d %d", data.name,data.location, data.type, data.read, data.star, data.damage);
+	fprintf(fp, "%s %s %s %d %d %d\n", data.name,data.location, data.type, data.read, data.star, data.damage);
 
 	fclose(fp);
 
@@ -684,7 +688,7 @@ void bookreadc(void)
 	while(tmp){
 		
 		fseek(fp, 0, SEEK_END);
-		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		fprintf(fp, "%s %s %s %d %d %d\n", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
 		tmp = tmp->next;
 	}	
 	while(list_head){
@@ -746,7 +750,7 @@ void bookrmove(void){
 	while(tmp){
 		
 		fseek(fp, 0, SEEK_END);
-		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		fprintf(fp, "%s %s %s %d %d %d\n", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
 		tmp = tmp->next;
 	}	
 	while(list_head){
@@ -811,7 +815,7 @@ void bookstarc(void)
 	while(tmp){
 		
 		fseek(fp, 0, SEEK_END);
-		fprintf(fp, "%s %s %s %d %d %d", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
+		fprintf(fp, "%s %s %s %d %d %d\n", tmp->name,tmp->location, tmp->type, tmp->read, tmp->star, tmp->damage);
 		tmp = tmp->next;
 	}	
 	while(list_head){
