@@ -14,7 +14,9 @@
 
 실행방법
 git clone https://github.com/naboyeong/20201795.git
+
 cd 20201795
+
 make를 입력  ./bookmanage 를 통해 프로그램 실행
 
 실행시 1~9까지 숫자를 입력해 기능을 실행함.
